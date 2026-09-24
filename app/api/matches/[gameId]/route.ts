@@ -1,0 +1,56 @@
+import { getFixture } from '@/lib/fixtures';
+import { getH2H } from '@/lib/h2h';
+import { getInjuries } from '@/lib/injuries';
+import { getPrediction } from '@/lib/predictions';
+import { getStrongestXIs } from '@/lib/strongest-xi';
+
+export async function GET(
+  _request: Request,
+  { params }: { params: Promise<{ gameId: string }> }
+) {
+  const { gameId } = await params;
+  const fixtureId = Number(gameId);
+
+  if (!Number.isInteger(fixtureId) || fixtureId <= 0) {
+    return Response.json(
+      { error: 'gameId must be a positive integer' },
+      { status: 400 }
+    );
+  }
+
+  try {
+    const fixture = await getFixture(fixtureId);
+    if (!fixture) {
+      return Response.json({ error: 'Match not found' }, { status: 404 });
+    }
+
+    const homeTeamId = fixture.teams.home.id;
+    const awayTeamId = fixture.teams.away.id;
+    const [prediction, h2h, injuries, strongestXI] = await Promise.all([
+      getPrediction(fixtureId),
+      getH2H(homeTeamId, awayTeamId),
+      getInjuries({ fixture: fixtureId }),
+      getStrongestXIs(fixtureId, homeTeamId, awayTeamId),
+    ]);
+
+    return Response.json({
+      data: {
+        fixture,
+        prediction,
+        h2h,
+        injuries,
+        strongestXI,
+      },
+      meta: {
+        source: 'api-football',
+        fetchedAt: new Date().toISOString(),
+      },
+    });
+  } catch (error) {
+    console.error('Match API error', { fixtureId, error });
+    return Response.json(
+      { error: 'Unable to load match data' },
+      { status: 502 }
+    );
+  }
+}
