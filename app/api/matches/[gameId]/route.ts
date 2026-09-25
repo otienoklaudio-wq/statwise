@@ -1,4 +1,9 @@
-import { getFixture } from '@/lib/fixtures';
+import {
+  getFixture,
+  getFixtureEvents,
+  getFixtureLineups,
+  getFixtureStatistics,
+} from '@/lib/fixtures';
 import { getH2H } from '@/lib/h2h';
 import { getInjuries } from '@/lib/injuries';
 import { getPrediction } from '@/lib/predictions';
@@ -26,7 +31,10 @@ export async function GET(
 
     const homeTeamId = fixture.teams.home.id;
     const awayTeamId = fixture.teams.away.id;
-    const [prediction, h2h, injuries, strongestXI] = await Promise.all([
+    const [statistics, events, lineups, prediction, h2h, injuries, strongestXI] = await Promise.all([
+      getFixtureStatistics(fixtureId),
+      getFixtureEvents(fixtureId),
+      getFixtureLineups(fixtureId),
       getPrediction(fixtureId),
       getH2H(homeTeamId, awayTeamId),
       getInjuries({ fixture: fixtureId }),
@@ -36,6 +44,9 @@ export async function GET(
     return Response.json({
       data: {
         fixture,
+        statistics,
+        events,
+        lineups,
         prediction,
         h2h,
         injuries,
