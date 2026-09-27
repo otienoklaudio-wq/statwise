@@ -94,18 +94,45 @@ button {
   white-space: nowrap;
 }
 
-.match-detail__section {
-  padding-top: 22px;
-}
-
-.match-detail__section h2 {
-  margin: 0 0 14px;
-  font-size: 1.15rem;
-}
-
-.match-detail__section p {
-  color: var(--muted);
+.match-detail__tablist {
+  display: flex;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--border);
   font-family: Arial, sans-serif;
+}
+
+.match-detail__tab {
+  flex: 1 0 120px;
+  min-height: 48px;
+  padding: 12px 18px;
+  border: 0;
+  border-bottom: 3px solid transparent;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.match-detail__tab:hover,
+.match-detail__tab:focus-visible {
+  background: var(--surface-muted);
+  color: var(--foreground);
+}
+
+.match-detail__tab.is-active {
+  border-bottom-color: var(--accent);
+  color: var(--foreground);
+}
+
+.match-detail__tabpanel {
+  min-height: 160px;
+  padding: 20px 0 0;
+  font-family: Arial, sans-serif;
+}
+
+.match-detail__tabpanel p {
+  color: var(--muted);
 }
 
 .match-detail__statistics {
@@ -197,6 +224,11 @@ button {
 
   .match-detail__score span {
     font-size: 1.5rem;
+  }
+
+  .match-detail__tab {
+    flex-basis: 100px;
+    padding-inline: 12px;
   }
 
   .match-detail__stat {

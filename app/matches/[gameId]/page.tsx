@@ -1,4 +1,5 @@
 import MatchTabs from '@/components/MatchTabs';
+import MatchDetailsTabs from '@/components/MatchDetailsTabs';
 import {
   getFixture,
   getFixtureEvents,
@@ -69,65 +70,7 @@ export default async function MatchPage({
             <strong>{fixture.teams.away.name}</strong>
           </div>
 
-          <section className="match-detail__section">
-            <h2>Statistics</h2>
-            {statistics.length ? (
-              <div className="match-detail__statistics">
-                {statistics[0].statistics.map((stat) => {
-                  const awayValue = statistics[1]?.statistics.find(
-                    (awayStat) => awayStat.type === stat.type
-                  )?.value;
-                  return (
-                    <div className="match-detail__stat" key={stat.type}>
-                      <strong>{stat.value ?? '-'}</strong>
-                      <span>{stat.type}</span>
-                      <strong>{awayValue ?? '-'}</strong>
-                    </div>
-                  );
-                })}
-              </div>
-            ) : (
-              <p>Statistics are not available for this match yet.</p>
-            )}
-          </section>
-
-          <section className="match-detail__section">
-            <h2>Events</h2>
-            {events.length ? (
-              <ol className="match-detail__events">
-                {events.map((event, index) => (
-                  <li key={`${event.time.elapsed}-${event.type}-${index}`}>
-                    <time>{event.time.elapsed}&apos;{event.time.extra ? `+${event.time.extra}` : ''}</time>
-                    <strong>{event.player.name ?? event.type}</strong>
-                    <span>{event.detail}</span>
-                    <span>{event.team.name}</span>
-                  </li>
-                ))}
-              </ol>
-            ) : (
-              <p>No match events are available yet.</p>
-            )}
-          </section>
-
-          <section className="match-detail__section">
-            <h2>Lineups</h2>
-            {lineups.length ? (
-              <div className="match-detail__lineups">
-                {lineups.map((lineup) => (
-                  <div key={lineup.team.id}>
-                    <h3>{lineup.team.name} <small>{lineup.formation}</small></h3>
-                    <ul>
-                      {lineup.startXI.map(({ player }) => (
-                        <li key={player.id}>{player.number}. {player.name} <span>{player.pos}</span></li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p>Lineups have not been published for this match.</p>
-            )}
-          </section>
+          <MatchDetailsTabs statistics={statistics} events={events} lineups={lineups} />
         </section>
       ) : (
         <section className="match-detail match-detail--empty" role="status">
