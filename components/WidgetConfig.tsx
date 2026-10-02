@@ -1,18 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-
-type AppTheme = 'default' | 'pitch' | 'dusk';
-
-function getStoredTheme(): AppTheme {
-  if (typeof window === 'undefined') return 'default';
-
-  const storedTheme = window.localStorage.getItem('football-predictor-theme');
-  return storedTheme === 'pitch' || storedTheme === 'dusk' ? storedTheme : 'default';
-}
+import { getStoredTheme, type AppTheme } from '@/lib/theme';
 
 function widgetTheme(theme: AppTheme): 'white' | 'dark' {
-  return theme === 'default' ? 'white' : 'dark';
+  return theme === 'light' ? 'white' : 'dark';
 }
 
 // The config widget carries no visible UI of its own - it just sets
@@ -21,7 +13,7 @@ function widgetTheme(theme: AppTheme): 'white' | 'dark' {
 // top of a layout or page, before any functional widgets.
 export default function WidgetConfig() {
   const key = process.env.NEXT_PUBLIC_API_FOOTBALL_WIDGET_KEY?.trim();
-  const [theme, setTheme] = useState<AppTheme>('default');
+  const [theme, setTheme] = useState<AppTheme>('light');
 
   useEffect(() => {
     const storedTheme = getStoredTheme();

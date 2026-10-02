@@ -1,25 +1,24 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { getStoredTheme, type AppTheme } from '@/lib/theme';
 
 const themes = [
-  { id: 'default', label: 'Daylight', color: '#d95f32' },
-  { id: 'pitch', label: 'Pitch', color: '#d7ef55' },
-  { id: 'dusk', label: 'Dusk', color: '#f0a35b' },
+  { id: 'light', label: 'Light', color: '#f4f1ea' },
+  { id: 'dark', label: 'Dark', color: '#00040D' },
 ] as const;
 
-type Theme = (typeof themes)[number]['id'];
+type Theme = AppTheme;
 
 export default function ThemeSettings() {
-  const [theme, setTheme] = useState<Theme>('default');
+  const [theme, setTheme] = useState<Theme>('light');
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    const savedTheme = window.localStorage.getItem('football-predictor-theme') as Theme | null;
-    if (savedTheme && themes.some((option) => option.id === savedTheme)) {
-      setTheme(savedTheme);
-      document.documentElement.dataset.theme = savedTheme;
-    }
+    const savedTheme = getStoredTheme();
+    setTheme(savedTheme);
+    window.localStorage.setItem('football-predictor-theme', savedTheme);
+    document.documentElement.dataset.theme = savedTheme;
   }, []);
 
   function selectTheme(nextTheme: Theme) {

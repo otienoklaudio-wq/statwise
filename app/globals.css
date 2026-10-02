@@ -11,8 +11,8 @@
   --shadow: 0 24px 60px rgba(57, 46, 30, 0.12);
 }
 
-:root[data-theme='pitch'] {
-  --background: #10231d;
+:root[data-theme='dark'] {
+  --background: #00040d;
   --surface: #18352a;
   --surface-muted: #234638;
   --foreground: #edf4e8;
@@ -22,19 +22,6 @@
   --accent-contrast: #10231d;
   --border: rgba(237, 244, 232, 0.16);
   --shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
-}
-
-:root[data-theme='dusk'] {
-  --background: #211d2b;
-  --surface: #302b3b;
-  --surface-muted: #40384e;
-  --foreground: #f7f0e8;
-  --muted: #c3b8c8;
-  --accent: #f0a35b;
-  --accent-strong: #dc8140;
-  --accent-contrast: #211d2b;
-  --border: rgba(247, 240, 232, 0.15);
-  --shadow: 0 24px 60px rgba(0, 0, 0, 0.24);
 }
 
 * {
@@ -591,9 +578,11 @@ button {
 .home-shell {
   min-height: 100vh;
   padding: 28px clamp(22px, 6vw, 88px) 72px;
-  background:
-    radial-gradient(circle at 85% 12%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 28%),
-    linear-gradient(135deg, transparent 0 48%, color-mix(in srgb, var(--surface-muted) 42%, transparent) 48% 49%, transparent 49%);
+  background: radial-gradient(
+    circle at 85% 12%,
+    color-mix(in srgb, var(--accent) 14%, transparent),
+    transparent 28%
+  );
 }
 
 .home-header,
