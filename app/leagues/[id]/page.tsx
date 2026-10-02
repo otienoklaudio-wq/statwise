@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import LeagueWidget from '@/components/LeagueWidget';
+import LeagueFixtures from '@/components/LeagueFixtures';
 import { getLeagueById } from '@/lib/leagues';
 
 export default async function LeaguePage({
@@ -15,7 +15,12 @@ export default async function LeaguePage({
     <main>
       <h1>{league.name}</h1>
       <p>{league.country}</p>
-      <LeagueWidget leagueId={league.id} standings tab="results" refresh={20} />
+      <LeagueFixtures
+        leagueId={league.id}
+        initialSeason={new Date().getUTCMonth() >= 6
+          ? new Date().getUTCFullYear()
+          : new Date().getUTCFullYear() - 1}
+      />
     </main>
   );
 }

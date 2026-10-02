@@ -1,5 +1,6 @@
 import MatchTabs from '@/components/MatchTabs';
 import MatchDetailsTabs from '@/components/MatchDetailsTabs';
+import { getCardForecast } from '@/lib/cards';
 import {
   getFixture,
   getFixtureEvents,
@@ -24,13 +25,14 @@ export default async function MatchPage({
   const fixture = Number.isInteger(fixtureId)
     ? await getFixture(fixtureId).catch(() => null)
     : null;
-  const [statistics, events, lineups] = fixture
+  const [statistics, events, lineups, cardForecast] = fixture
     ? await Promise.all([
         getFixtureStatistics(fixtureId).catch(() => []),
         getFixtureEvents(fixtureId).catch(() => []),
         getFixtureLineups(fixtureId).catch(() => []),
+        getCardForecast(fixture, fixture.teams.home.id, fixture.teams.away.id).catch(() => null),
       ])
-    : [[], [], []];
+    : [[], [], [], null];
   const homeTeamId = Number.isInteger(Number(home))
     ? Number(home)
     : fixture?.teams.home.id ?? Number.NaN;
@@ -70,7 +72,12 @@ export default async function MatchPage({
             <strong>{fixture.teams.away.name}</strong>
           </div>
 
-          <MatchDetailsTabs statistics={statistics} events={events} lineups={lineups} />
+          <MatchDetailsTabs
+            statistics={statistics}
+            events={events}
+            lineups={lineups}
+            cardForecast={cardForecast}
+          />
         </section>
       ) : (
         <section className="match-detail match-detail--empty" role="status">

@@ -137,7 +137,9 @@ export default function MatchTabs({ prediction, h2h, injuries, strongestXI }: Ma
               {[strongestXI.home, strongestXI.away].map((team) => (
                 <section className="strongest-xi__team" key={team.team.id}>
                   <h3>{team.team.name}</h3>
-                  <p className="strongest-xi__season">Season {team.season} - based on wins as a starter</p>
+                  <p className="strongest-xi__season">
+                    Season {team.season} - {team.fixturesWithLineups} of {team.completedFixtures} completed match lineups available
+                  </p>
                   <div className="strongest-xi__positions">
                     {team.positions.map((position) => (
                       <div className="strongest-xi__position" key={position.position}>
@@ -146,7 +148,7 @@ export default function MatchTabs({ prediction, h2h, injuries, strongestXI }: Ma
                           <div>
                             {position.players.map((player) => (
                               <strong key={player.id}>
-                                {player.name} <small>({player.wins} wins)</small>
+                                {player.name} <small>({player.wins} wins, {player.appearances} starts)</small>
                               </strong>
                             ))}
                           </div>

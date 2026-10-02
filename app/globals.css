@@ -58,6 +58,107 @@ button {
   font: inherit;
 }
 
+.league-fixtures {
+  width: min(1100px, calc(100% - 32px));
+  margin: 24px auto;
+  font-family: Arial, sans-serif;
+}
+
+.league-fixtures__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.league-fixtures__toolbar h2 {
+  margin: 0;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.2rem;
+}
+
+.league-fixtures__toolbar label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.league-fixtures__toolbar select {
+  min-height: 40px;
+  min-width: 130px;
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--surface);
+  color: var(--foreground);
+  font: inherit;
+}
+
+.league-fixtures__month h3 {
+  margin: 22px 0 4px;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.league-fixtures__list {
+  display: grid;
+}
+
+.league-fixtures__match {
+  display: grid;
+  grid-template-columns: 70px minmax(100px, 1fr) 80px minmax(100px, 1fr) 44px;
+  gap: 12px;
+  align-items: center;
+  min-height: 56px;
+  padding: 10px 8px;
+  border-bottom: 1px solid var(--border);
+  color: var(--foreground);
+  text-decoration: none;
+}
+
+.league-fixtures__match:hover,
+.league-fixtures__match:focus-visible {
+  background: var(--surface-muted);
+}
+
+.league-fixtures__match time,
+.league-fixtures__match span {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.league-fixtures__match b {
+  text-align: center;
+}
+
+@media (max-width: 600px) {
+  .league-fixtures__toolbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .league-fixtures__toolbar label {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .league-fixtures__match {
+    grid-template-columns: 48px minmax(0, 1fr) 55px minmax(0, 1fr);
+    gap: 8px;
+    font-size: 0.86rem;
+  }
+
+  .league-fixtures__match span {
+    display: none;
+  }
+}
+
 .match-detail {
   width: min(1100px, calc(100% - 32px));
   margin: 24px auto 0;
@@ -204,6 +305,37 @@ button {
   justify-content: space-between;
 }
 
+.card-forecast__metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.card-forecast__metrics > div {
+  display: grid;
+  gap: 8px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  background: var(--surface-muted);
+}
+
+.card-forecast__metrics span,
+.card-forecast__metrics small,
+.card-forecast p {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.card-forecast__metrics strong {
+  color: var(--foreground);
+  font-size: 1.5rem;
+}
+
+.card-forecast p {
+  margin: 14px 0 0;
+  line-height: 1.5;
+}
+
 .match-detail--empty {
   font-family: Arial, sans-serif;
 }
@@ -238,6 +370,10 @@ button {
   }
 
   .match-detail__lineups {
+    grid-template-columns: 1fr;
+  }
+
+  .card-forecast__metrics {
     grid-template-columns: 1fr;
   }
 }
@@ -468,20 +604,42 @@ button {
 
 .home-header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
 }
 
+.home-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
 .wordmark {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
   color: var(--foreground);
-  font-size: 1.1rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
   text-decoration: none;
 }
 
+.wordmark__code {
+  color: var(--muted);
+  font-family: Arial, sans-serif;
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+}
+
+.wordmark__name {
+  max-width: 720px;
+  margin: 0;
+  font-size: clamp(3.5rem, 10vw, 8rem);
+  font-weight: 400;
+  line-height: 0.9;
+}
+
 .home-content {
-  padding: clamp(88px, 15vh, 170px) 0 0;
+  padding: 64px 0 0;
 }
 
 .eyebrow {
@@ -505,7 +663,7 @@ button {
 
 .home-intro {
   max-width: 460px;
-  margin: 28px 0 58px;
+  margin: 8px 0 0;
   color: var(--muted);
   font-family: Arial, sans-serif;
   font-size: 1.05rem;

@@ -51,7 +51,7 @@ own API without calling API-Football directly:
 - `GET /api/health` - reports service status and whether the private provider
   key is configured. It never returns the key itself.
 - `GET /api/matches/:gameId` - returns the fixture, prediction, H2H, injuries,
-  and strongest-XI payload for one match.
+  strongest-XI, statistics, events, lineups, and card forecast for one match.
 
 The route handlers call the existing `lib/*` provider adapter, so the private
 `API_FOOTBALL_KEY` remains server-only. The next backend layers are durable
@@ -69,10 +69,16 @@ These were flagged during planning and are not yet implemented in code:
   are the next backend step.
 - **Chance-creation index** (open play vs set-piece goals, key-passes/
   assists aggregation) - not implemented
-- **Referee card-rate aggregation** - not implemented, no native
-  endpoint for this; needs building from fixture events over time
-- **Poisson / Negative Binomial probability engine** (safest / most
-  ambitious bet rankings) - not implemented
+- **Yellow/red card estimate** - `lib/cards.ts` counts cards from each
+  team's five most recent completed fixtures in the match season. Expected
+  totals are the sum of the two teams' per-match averages. If at least three
+  sampled matches were handled by the assigned referee, a referee-to-sample
+  rate ratio is clamped to 0.75-1.25 and shrunk toward 1 by `n / (n + 4)`.
+  Red-card probability uses `1 - exp(-expectedRedCards)`. This is a heuristic
+  estimate, not a trained model; matches are fetched on demand because durable
+  referee history and scheduled ingestion are not yet implemented.
+- **Broader Poisson / Negative Binomial model** (goal and bet probability
+  rankings) - not implemented
 - **BunnyCDN caching layer for the widget key** - intentionally deferred
   until after the site is operational
 - **`widgetSeasonId` values** in `lib/leagues.ts` - placeholders, need

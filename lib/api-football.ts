@@ -35,6 +35,18 @@ function evictOldestEntry() {
   if (oldestKey) responseCache.delete(oldestKey);
 }
 
+function providerErrorMessage(errors: unknown): string | null {
+  if (!errors || typeof errors !== 'object' || Array.isArray(errors)) return null;
+  const entries = Object.entries(errors as Record<string, unknown>)
+    .filter(([, value]) => value !== null && value !== undefined && value !== '' && value !== false);
+  if (entries.length === 0) return null;
+
+  const details = entries
+    .map(([name, value]) => `${name}: ${Array.isArray(value) ? value.join(', ') : String(value)}`)
+    .join('; ');
+  return `API-Football rejected the request (${details})`;
+}
+
 export async function apiFootball<T>(
   endpoint: string,
   params: Record<string, string | number | undefined> = {}
@@ -77,7 +89,12 @@ export async function apiFootball<T>(
       throw new Error(`API-Football error ${res.status}: ${res.statusText} (${endpoint})`);
     }
 
-    const value = await res.json();
+    const value: unknown = await res.json();
+    if (value && typeof value === 'object' && !Array.isArray(value)) {
+      const providerError = providerErrorMessage((value as { errors?: unknown }).errors);
+      if (providerError) throw new Error(providerError);
+    }
+
     if (responseCache.size >= MAX_CACHE_ENTRIES) evictOldestEntry();
     responseCache.set(cacheKey, { expiresAt: Date.now() + cacheTtl(endpoint), value });
     return value;

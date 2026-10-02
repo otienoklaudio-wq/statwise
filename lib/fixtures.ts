@@ -75,7 +75,12 @@ export interface Lineup {
 }
 
 export interface FixtureSummary {
-  fixture: { id: number; date: string; status: { short: string } };
+  fixture: {
+    id: number;
+    date: string;
+    referee?: string | null;
+    status: { short: string };
+  };
   league: { id: number; name: string; season: number; round?: string | null };
   teams: {
     home: { id: number; name: string; winner: boolean | null };
@@ -85,10 +90,11 @@ export interface FixtureSummary {
 }
 
 /** GET /fixtures - completed fixtures for a team in a season. */
-export async function getTeamSeasonFixtures(teamId: number, season: number) {
+export async function getTeamSeasonFixtures(teamId: number, season: number, leagueId?: number) {
   const data = await apiFootball<{ response: FixtureSummary[] }>('/fixtures', {
     team: teamId,
     season,
+    league: leagueId,
     status: 'FT',
   });
   return data.response;
@@ -100,6 +106,15 @@ export async function getFixture(fixtureId: number) {
     id: fixtureId,
   });
   return data.response[0] ?? null;
+}
+
+/** GET /fixtures?league={id}&season={seasonStartYear} */
+export async function getLeagueFixtures(leagueId: number, season: number) {
+  const data = await apiFootball<{ response: FixtureSummary[] }>('/fixtures', {
+    league: leagueId,
+    season,
+  });
+  return data.response;
 }
 
 /** GET /fixtures/lineups - confirmed lineups (usually available ~1hr before kickoff) */

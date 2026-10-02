@@ -6,15 +6,17 @@ export default function HomePage() {
   return (
     <main className="home-shell">
       <header className="home-header">
-        <Link className="wordmark" href="/">FP / 26</Link>
+        <div className="home-brand">
+          <Link className="wordmark" href="/">
+            <span className="wordmark__code">FP / 26</span>
+            <h1 className="wordmark__name">Statwise</h1>
+          </Link>
+          <p className="home-intro">Past performance doesnt guarantee future results.</p>
+        </div>
         <ThemeSettings />
       </header>
 
       <section className="home-content">
-        <p className="eyebrow">European football intelligence</p>
-        <h1>Statwise</h1>
-        <p className="home-intro">Past performance doesnt guarantee future results.</p>
-
         <ul className="league-list">
         {LEAGUES.map((league) => (
           <li key={league.id}>

@@ -4,6 +4,7 @@ import {
   getFixtureLineups,
   getFixtureStatistics,
 } from '@/lib/fixtures';
+import { getCardForecast } from '@/lib/cards';
 import { getH2H } from '@/lib/h2h';
 import { getInjuries } from '@/lib/injuries';
 import { getPrediction } from '@/lib/predictions';
@@ -31,10 +32,11 @@ export async function GET(
 
     const homeTeamId = fixture.teams.home.id;
     const awayTeamId = fixture.teams.away.id;
-    const [statistics, events, lineups, prediction, h2h, injuries, strongestXI] = await Promise.all([
+    const [statistics, events, lineups, cardForecast, prediction, h2h, injuries, strongestXI] = await Promise.all([
       getFixtureStatistics(fixtureId),
       getFixtureEvents(fixtureId),
       getFixtureLineups(fixtureId),
+      getCardForecast(fixture, homeTeamId, awayTeamId).catch(() => null),
       getPrediction(fixtureId),
       getH2H(homeTeamId, awayTeamId),
       getInjuries({ fixture: fixtureId }),
@@ -47,6 +49,7 @@ export async function GET(
         statistics,
         events,
         lineups,
+        cardForecast,
         prediction,
         h2h,
         injuries,
