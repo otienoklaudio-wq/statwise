@@ -34,6 +34,8 @@ Open http://localhost:3000
   is limited to 250 entries and resets when the server restarts.
 - `lib/fixtures.ts`, `lib/injuries.ts`, `lib/predictions.ts` - typed
   functions for the REST endpoints covered so far
+- `lib/corners.ts`, `lib/probability.ts` - corner forecast using venue-specific
+  team corner rates, a league baseline, and Negative Binomial threshold probabilities
 - `lib/leagues.ts` - the six target leagues; `widgetSeasonId` still
   needs resolving per league before the games widget pages will render
   (see the note in that file)
@@ -51,7 +53,7 @@ own API without calling API-Football directly:
 - `GET /api/health` - reports service status and whether the private provider
   key is configured. It never returns the key itself.
 - `GET /api/matches/:gameId` - returns the fixture, prediction, H2H, injuries,
-  strongest-XI, statistics, events, lineups, and card forecast for one match.
+  strongest-XI, statistics, events, lineups, and card/corner forecasts for one match.
 
 The route handlers call the existing `lib/*` provider adapter, so the private
 `API_FOOTBALL_KEY` remains server-only. The next backend layers are durable
@@ -79,6 +81,10 @@ These were flagged during planning and are not yet implemented in code:
   referee history and scheduled ingestion are not yet implemented.
 - **Broader Poisson / Negative Binomial model** (goal and bet probability
   rankings) - not implemented
+- **Corner forecast limits** - corner history is fetched on demand from up to
+  five recent completed league fixtures per side (up to ten unique fixture
+  statistics calls). The in-memory provider cache reduces repeated requests
+  temporarily; durable historical statistics are still needed for production use.
 - **BunnyCDN caching layer for the widget key** - intentionally deferred
   until after the site is operational
 - **`widgetSeasonId` values** in `lib/leagues.ts` - placeholders, need

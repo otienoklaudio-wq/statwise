@@ -5,16 +5,18 @@ import type { H2HFixture } from '@/lib/h2h';
 import type { InjuryRecord } from '@/lib/injuries';
 import type { PredictionResponse } from '@/lib/predictions';
 import type { StrongestXI } from '@/lib/strongest-xi';
+import type { TeamForm } from '@/lib/team-form';
 
 interface MatchTabsProps {
   prediction: PredictionResponse | null;
   h2h: H2HFixture[];
   injuries: InjuryRecord[];
   strongestXI: { home: StrongestXI; away: StrongestXI } | null;
+  teamsForm: { home: TeamForm; away: TeamForm } | null;
 }
 
-export default function MatchTabs({ prediction, h2h, injuries, strongestXI }: MatchTabsProps) {
-  const [activeTab, setActiveTab] = useState<'predictions' | 'h2h' | 'injuries' | 'strongestXI'>('predictions');
+export default function MatchTabs({ prediction, h2h, injuries, strongestXI, teamsForm }: MatchTabsProps) {
+  const [activeTab, setActiveTab] = useState<'predictions' | 'h2h' | 'injuries' | 'strongestXI' | 'teamForm'>('predictions');
 
   return (
     <section className="match-tabs">
@@ -27,6 +29,15 @@ export default function MatchTabs({ prediction, h2h, injuries, strongestXI }: Ma
           onClick={() => setActiveTab('predictions')}
         >
           Predictions
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={activeTab === 'teamForm'}
+          className={activeTab === 'teamForm' ? 'match-tab is-active' : 'match-tab'}
+          onClick={() => setActiveTab('teamForm')}
+        >
+          Team Form
         </button>
         <button
           type="button"
@@ -163,6 +174,44 @@ export default function MatchTabs({ prediction, h2h, injuries, strongestXI }: Ma
             </div>
           ) : (
             <p>Strongest XI data is not available for this fixture yet.</p>
+          ))}
+          {activeTab === 'teamForm' && (teamsForm ? (
+            <div className="team-form">
+              {[teamsForm.home, teamsForm.away].map((team) => (
+                <section className="team-form__team" key={team.team.id}>
+                  <h3>{team.team.name}</h3>
+                  {team.matches.length > 0 ? (
+                    <>
+                      <ol className="team-form__results" aria-label={`${team.team.name} last ${team.matches.length} results`}>
+                        {team.matches.map((match) => (
+                          <li
+                            className={`team-form__result team-form__result--${match.result.toLowerCase()}`}
+                            key={match.fixtureId}
+                            title={`${match.result}: ${match.venue} vs ${match.opponent}, ${match.goalsFor}-${match.goalsAgainst}`}
+                          >
+                            {match.result}
+                          </li>
+                        ))}
+                      </ol>
+                      <ol className="team-form__matches">
+                        {team.matches.map((match) => (
+                          <li key={match.fixtureId}>
+                            <time dateTime={match.date}>{new Date(match.date).toLocaleDateString()}</time>
+                            <span>{match.venue} vs {match.opponent}</span>
+                            <strong>{match.goalsFor} - {match.goalsAgainst}</strong>
+                            <b className={`team-form__tag team-form__tag--${match.result.toLowerCase()}`}>{match.result}</b>
+                          </li>
+                        ))}
+                      </ol>
+                    </>
+                  ) : (
+                    <p>No completed league matches were available before this fixture.</p>
+                  )}
+                </section>
+              ))}
+            </div>
+          ) : (
+            <p>Team form is temporarily unavailable because recent league results could not be loaded.</p>
           ))}
       </div>
     </section>

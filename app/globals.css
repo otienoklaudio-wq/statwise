@@ -323,6 +323,38 @@ button {
   line-height: 1.5;
 }
 
+.corner-forecast__table {
+  margin-top: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.corner-forecast__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  text-align: right;
+}
+
+.corner-forecast__row > :first-child {
+  text-align: left;
+}
+
+.corner-forecast__row--header {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.corner-forecast > p {
+  color: var(--muted);
+  font-family: Arial, sans-serif;
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
 .match-detail--empty {
   font-family: Arial, sans-serif;
 }
@@ -548,6 +580,84 @@ button {
   font-weight: 400;
 }
 
+.team-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.team-form__team h3 {
+  margin: 0 0 14px;
+}
+
+.team-form__results {
+  display: flex;
+  gap: 8px;
+  margin: 0 0 14px;
+  padding: 0;
+  list-style: none;
+}
+
+.team-form__result,
+.team-form__tag {
+  display: grid;
+  min-width: 32px;
+  min-height: 32px;
+  place-items: center;
+  border-radius: 3px;
+  font-family: Arial, sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.team-form__result--w,
+.team-form__tag--w {
+  background: #287a4b;
+  color: #fff;
+}
+
+.team-form__result--d,
+.team-form__tag--d {
+  background: #858585;
+  color: #fff;
+}
+
+.team-form__result--l,
+.team-form__tag--l {
+  background: #b8443d;
+  color: #fff;
+}
+
+.team-form__matches {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-family: Arial, sans-serif;
+}
+
+.team-form__matches li {
+  display: grid;
+  grid-template-columns: 90px minmax(0, 1fr) 52px 32px;
+  gap: 10px;
+  align-items: center;
+  min-height: 42px;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.84rem;
+}
+
+.team-form__matches time {
+  color: var(--muted);
+}
+
+.team-form__matches strong {
+  text-align: center;
+}
+
+.team-form__tag {
+  min-width: 26px;
+  min-height: 26px;
+}
+
 @media (max-width: 700px) {
   .match-tabs__header {
     overflow-x: auto;
@@ -568,6 +678,16 @@ button {
 
   .strongest-xi {
     grid-template-columns: 1fr;
+  }
+
+  .team-form {
+    grid-template-columns: 1fr;
+  }
+
+  .team-form__matches li {
+    grid-template-columns: 76px minmax(0, 1fr) 44px 28px;
+    gap: 6px;
+    font-size: 0.76rem;
   }
 
   .strongest-xi__position {

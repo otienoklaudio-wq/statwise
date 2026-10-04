@@ -2,6 +2,7 @@
 
 import { useRef, useState } from 'react';
 import type { CardForecast } from '@/lib/cards';
+import type { CornerForecast } from '@/lib/corners';
 import type { FixtureEvent, Lineup, TeamFixtureStatistics } from '@/lib/fixtures';
 
 interface MatchDetailsTabsProps {
@@ -9,6 +10,7 @@ interface MatchDetailsTabsProps {
   events: FixtureEvent[];
   lineups: Lineup[];
   cardForecast: CardForecast | null;
+  cornerForecast: CornerForecast | null;
 }
 
 const tabs = [
@@ -16,11 +18,18 @@ const tabs = [
   { id: 'events', label: 'Events' },
   { id: 'lineups', label: 'Lineups' },
   { id: 'cards', label: 'Cards' },
+  { id: 'corners', label: 'Corners' },
 ] as const;
 
 type MatchDetailsTab = (typeof tabs)[number]['id'];
 
-export default function MatchDetailsTabs({ statistics, events, lineups, cardForecast }: MatchDetailsTabsProps) {
+export default function MatchDetailsTabs({
+  statistics,
+  events,
+  lineups,
+  cardForecast,
+  cornerForecast,
+}: MatchDetailsTabsProps) {
   const [activeTab, setActiveTab] = useState<MatchDetailsTab>('statistics');
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
 
@@ -145,6 +154,54 @@ export default function MatchDetailsTabs({ statistics, events, lineups, cardFore
               </p>
             </div>
           ) : <p>Card estimates need available recent match events and are shown for upcoming fixtures only.</p>
+        )}
+
+        {activeTab === 'corners' && (
+          cornerForecast ? (
+            <div className="corner-forecast">
+              <div className="card-forecast__metrics">
+                <div>
+                  <span>Home corners expected</span>
+                  <strong>{cornerForecast.expectedHome.toFixed(1)}</strong>
+                  <small>Based on {cornerForecast.homeSamples} recent matches</small>
+                </div>
+                <div>
+                  <span>Away corners expected</span>
+                  <strong>{cornerForecast.expectedAway.toFixed(1)}</strong>
+                  <small>Based on {cornerForecast.awaySamples} recent matches</small>
+                </div>
+                <div>
+                  <span>Total corners expected</span>
+                  <strong>{cornerForecast.expectedTotal.toFixed(1)}</strong>
+                  <small>Negative Binomial dispersion: {cornerForecast.dispersion.toFixed(1)}</small>
+                </div>
+              </div>
+              <div className="corner-forecast__table" role="table" aria-label="Total corner threshold probabilities">
+                <div className="corner-forecast__row corner-forecast__row--header" role="row">
+                  <span role="columnheader">Total line</span>
+                  <span role="columnheader">Under</span>
+                  <span role="columnheader">Over</span>
+                </div>
+                {cornerForecast.totalThresholds
+                  .filter((threshold) => threshold.side === 'under')
+                  .map((under) => {
+                    const over = cornerForecast.totalThresholds.find(
+                      (threshold) => threshold.line === under.line && threshold.side === 'over'
+                    );
+                    return (
+                      <div className="corner-forecast__row" role="row" key={under.line}>
+                        <strong role="cell">{under.line.toFixed(1)}</strong>
+                        <span role="cell">{(under.probability * 100).toFixed(1)}%</span>
+                        <span role="cell">{((over?.probability ?? 0) * 100).toFixed(1)}%</span>
+                      </div>
+                    );
+                  })}
+              </div>
+              <p>
+                Negative Binomial estimates use the last five completed league matches available for each team and a baseline from {cornerForecast.leagueBaselineSamples} unique matches.
+              </p>
+            </div>
+          ) : <p>Corner estimates require available recent league fixtures and match statistics; forecasts are for upcoming fixtures only.</p>
         )}
       </div>
     </div>

@@ -1,6 +1,7 @@
 import MatchTabs from '@/components/MatchTabs';
 import MatchDetailsTabs from '@/components/MatchDetailsTabs';
 import { getCardForecast } from '@/lib/cards';
+import { getCornerForecast } from '@/lib/corners';
 import {
   getFixture,
   getFixtureEvents,
@@ -11,6 +12,7 @@ import { getH2H } from '@/lib/h2h';
 import { getInjuries, type InjuryRecord } from '@/lib/injuries';
 import { getPrediction } from '@/lib/predictions';
 import { getStrongestXIs } from '@/lib/strongest-xi';
+import { getTeamsForm } from '@/lib/team-form';
 
 export default async function MatchPage({
   params,
@@ -25,14 +27,16 @@ export default async function MatchPage({
   const fixture = Number.isInteger(fixtureId)
     ? await getFixture(fixtureId).catch(() => null)
     : null;
-  const [statistics, events, lineups, cardForecast] = fixture
+  const [statistics, events, lineups, cardForecast, cornerForecast, teamsForm] = fixture
     ? await Promise.all([
         getFixtureStatistics(fixtureId).catch(() => []),
         getFixtureEvents(fixtureId).catch(() => []),
         getFixtureLineups(fixtureId).catch(() => []),
         getCardForecast(fixture, fixture.teams.home.id, fixture.teams.away.id).catch(() => null),
+        getCornerForecast(fixture).catch(() => null),
+        getTeamsForm(fixture).catch(() => null),
       ])
-    : [[], [], [], null];
+    : [[], [], [], null, null, null];
   const homeTeamId = Number.isInteger(Number(home))
     ? Number(home)
     : fixture?.teams.home.id ?? Number.NaN;
@@ -77,6 +81,7 @@ export default async function MatchPage({
             events={events}
             lineups={lineups}
             cardForecast={cardForecast}
+            cornerForecast={cornerForecast}
           />
         </section>
       ) : (
@@ -86,7 +91,13 @@ export default async function MatchPage({
         </section>
       )}
 
-      <MatchTabs prediction={prediction} h2h={h2h} injuries={injuries} strongestXI={strongestXI} />
+      <MatchTabs
+        prediction={prediction}
+        h2h={h2h}
+        injuries={injuries}
+        strongestXI={strongestXI}
+        teamsForm={teamsForm}
+      />
     </main>
   );
 }
