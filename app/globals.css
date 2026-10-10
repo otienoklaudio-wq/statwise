@@ -900,3 +900,21 @@ button {
     padding-top: 100px;
   }
 }
+
+.view-switch {
+  width: min(1100px, calc(100% - 32px));
+  margin: 12px auto 0;
+  font-family: Arial, sans-serif;
+  font-size: 0.84rem;
+}
+
+.view-switch a {
+  color: var(--accent-strong);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.view-switch a:hover,
+.view-switch a:focus-visible {
+  color: var(--foreground);
+}
