@@ -500,6 +500,177 @@ button {
   font-size: 1.05rem;
 }
 
+.prediction-comparison {
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+}
+
+.prediction-comparison h3 {
+  margin: 0 0 16px;
+  font-size: 1rem;
+}
+
+.prediction-comparison__layout {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.9fr) minmax(300px, 1.1fr);
+  gap: 26px;
+  align-items: center;
+}
+
+.prediction-radar {
+  min-width: 0;
+}
+
+.prediction-radar__chart {
+  display: block;
+  width: min(100%, 380px);
+  margin: 0 auto;
+  overflow: visible;
+}
+
+.prediction-radar__grid {
+  fill: none;
+  stroke: var(--border);
+  stroke-width: 1;
+}
+
+.prediction-radar__axis {
+  stroke: var(--border);
+  stroke-width: 1;
+}
+
+.prediction-radar__label {
+  fill: var(--muted);
+  font-family: Arial, sans-serif;
+  font-size: 10px;
+}
+
+.prediction-radar__shape {
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+
+.prediction-radar__shape--home {
+  fill: color-mix(in srgb, #2785ce 24%, transparent);
+  stroke: #2785ce;
+}
+
+.prediction-radar__shape--away {
+  fill: color-mix(in srgb, #73bf32 24%, transparent);
+  stroke: #73bf32;
+}
+
+.prediction-radar__legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 10px;
+  color: var(--muted);
+  font-family: Arial, sans-serif;
+  font-size: 0.78rem;
+}
+
+.prediction-radar__legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.prediction-radar__key {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+}
+
+.prediction-radar__key--home {
+  background: #2785ce;
+}
+
+.prediction-radar__key--away {
+  background: #73bf32;
+}
+
+.prediction-radar__empty {
+  min-height: 180px;
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+  font-family: Arial, sans-serif;
+  font-size: 0.84rem;
+  text-align: center;
+}
+
+.prediction-strengths {
+  display: grid;
+  gap: 15px;
+  font-family: Arial, sans-serif;
+}
+
+.prediction-strength__labels {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr) 42px;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 5px;
+  font-size: 0.76rem;
+  text-align: center;
+}
+
+.prediction-strength__labels span:first-child {
+  color: #2785ce;
+  text-align: left;
+}
+
+.prediction-strength__labels span:last-child {
+  color: #5b9827;
+  text-align: right;
+}
+
+.prediction-strength__labels strong {
+  color: var(--muted);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+}
+
+.prediction-strength__track {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 1px minmax(0, 1fr);
+  gap: 4px;
+  align-items: center;
+  height: 8px;
+}
+
+.prediction-strength__side {
+  display: flex;
+  height: 5px;
+  overflow: hidden;
+  background: var(--surface-muted);
+}
+
+.prediction-strength__side--home {
+  justify-content: flex-end;
+}
+
+.prediction-strength__side--home i,
+.prediction-strength__side--away i {
+  display: block;
+  height: 100%;
+}
+
+.prediction-strength__side--home i {
+  background: #2785ce;
+}
+
+.prediction-strength__side--away i {
+  background: #73bf32;
+}
+
+.prediction-strength__divider {
+  height: 8px;
+  background: var(--muted);
+}
+
 .match-list {
   display: grid;
   gap: 8px;
@@ -678,6 +849,15 @@ button {
 
   .strongest-xi {
     grid-template-columns: 1fr;
+  }
+
+  .prediction-comparison__layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 22px;
+  }
+
+  .prediction-radar__chart {
+    width: min(100%, 340px);
   }
 
   .team-form {

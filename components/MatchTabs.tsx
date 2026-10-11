@@ -15,6 +15,132 @@ interface MatchTabsProps {
   teamsForm: { home: TeamForm; away: TeamForm } | null;
 }
 
+const comparisonAxes = [
+  { key: 'form', label: 'Form' },
+  { key: 'att', label: 'Attack' },
+  { key: 'def', label: 'Defense' },
+  { key: 'poisson_distribution', label: 'Poisson' },
+  { key: 'h2h', label: 'H2H' },
+  { key: 'goals', label: 'Goals' },
+  { key: 'total', label: 'Overall' },
+] as const;
+
+type ComparisonKey = (typeof comparisonAxes)[number]['key'];
+
+function comparisonPercent(value: string): number | null {
+  const parsed = Number.parseFloat(value.replace('%', '').trim());
+  return Number.isFinite(parsed) ? Math.max(0, Math.min(100, parsed)) : null;
+}
+
+function radarPoints(values: number[], centerX: number, centerY: number, radius: number): string {
+  return values.map((value, index) => {
+    const angle = -Math.PI / 2 + (2 * Math.PI * index) / values.length;
+    const pointRadius = radius * value / 100;
+    const x = centerX + Math.cos(angle) * pointRadius;
+    const y = centerY + Math.sin(angle) * pointRadius;
+    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  }).join(' ');
+}
+
+function ComparisonChart({ prediction }: { prediction: PredictionResponse }) {
+  const metrics = comparisonAxes.map(({ key, label }) => ({
+    key,
+    label,
+    home: comparisonPercent(prediction.comparison[key].home),
+    away: comparisonPercent(prediction.comparison[key].away),
+  }));
+  const chartAvailable = metrics.every((metric) => metric.home !== null && metric.away !== null);
+  const centerX = 160;
+  const centerY = 145;
+  const radius = 91;
+  const homeValues = metrics.map((metric) => metric.home ?? 0);
+  const awayValues = metrics.map((metric) => metric.away ?? 0);
+
+  return (
+    <section className="prediction-comparison" aria-labelledby="prediction-comparison-title">
+      <h3 id="prediction-comparison-title">Team comparison</h3>
+      <div className="prediction-comparison__layout">
+        <div className="prediction-radar">
+          {chartAvailable ? (
+            <svg
+              className="prediction-radar__chart"
+              viewBox="0 0 320 290"
+              role="img"
+              aria-label={`${prediction.teams.home.name} and ${prediction.teams.away.name} comparison radar chart`}
+            >
+              {[25, 50, 75, 100].map((level) => (
+                <polygon
+                  className="prediction-radar__grid"
+                  key={level}
+                  points={radarPoints(metrics.map(() => level), centerX, centerY, radius)}
+                />
+              ))}
+              {metrics.map((metric, index) => {
+                const angle = -Math.PI / 2 + (2 * Math.PI * index) / metrics.length;
+                const labelRadius = radius + 20;
+                const x = centerX + Math.cos(angle) * labelRadius;
+                const y = centerY + Math.sin(angle) * labelRadius;
+                const anchor = Math.cos(angle) > 0.35
+                  ? 'start'
+                  : Math.cos(angle) < -0.35 ? 'end' : 'middle';
+                return (
+                  <g key={metric.key}>
+                    <line
+                      className="prediction-radar__axis"
+                      x1={centerX}
+                      y1={centerY}
+                      x2={centerX + Math.cos(angle) * radius}
+                      y2={centerY + Math.sin(angle) * radius}
+                    />
+                    <text className="prediction-radar__label" x={x} y={y} textAnchor={anchor}>
+                      {metric.label}
+                    </text>
+                  </g>
+                );
+              })}
+              <polygon
+                className="prediction-radar__shape prediction-radar__shape--home"
+                points={radarPoints(homeValues, centerX, centerY, radius)}
+              />
+              <polygon
+                className="prediction-radar__shape prediction-radar__shape--away"
+                points={radarPoints(awayValues, centerX, centerY, radius)}
+              />
+            </svg>
+          ) : (
+            <p className="prediction-radar__empty">The comparison chart is unavailable because some metrics were not returned.</p>
+          )}
+          <div className="prediction-radar__legend" aria-label="Teams">
+            <span><i className="prediction-radar__key prediction-radar__key--home" />{prediction.teams.home.name}</span>
+            <span><i className="prediction-radar__key prediction-radar__key--away" />{prediction.teams.away.name}</span>
+          </div>
+        </div>
+
+        <div className="prediction-strengths" aria-label="Comparison strength metrics">
+          {metrics.map((metric) => (
+            <div className="prediction-strength" key={metric.key}>
+              <div className="prediction-strength__labels">
+                <span>{metric.home === null ? '—' : `${metric.home}%`}</span>
+                <strong>{metric.label}</strong>
+                <span>{metric.away === null ? '—' : `${metric.away}%`}</span>
+              </div>
+              <div className="prediction-strength__track" aria-hidden="true">
+                <div className="prediction-strength__side prediction-strength__side--home">
+                  <i style={{ width: `${metric.home ?? 0}%` }} />
+                </div>
+                <span className="prediction-strength__divider" />
+                <div className="prediction-strength__side prediction-strength__side--away">
+                  <i style={{ width: `${metric.away ?? 0}%` }} />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export default function MatchTabs({ prediction, h2h, injuries, strongestXI, teamsForm }: MatchTabsProps) {
   const [activeTab, setActiveTab] = useState<'predictions' | 'h2h' | 'injuries' | 'strongestXI' | 'teamForm'>('predictions');
 
@@ -110,6 +236,7 @@ export default function MatchTabs({ prediction, h2h, injuries, strongestXI, team
                   <strong>{prediction.predictions.win_or_draw ? 'Yes' : 'No'}</strong>
                 </div>
               </div>
+              <ComparisonChart prediction={prediction} />
             </div>
           ) : (
             <p>No prediction data available for this fixture yet.</p>
